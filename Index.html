@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Shop Game Premium - Full Detail View</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-bg: #020617;
+            --glass-bg: rgba(15, 23, 42, 0.95);
+            --modal-bg: #081020; 
+            --neon-blue: #0ea5e9;
+            --btn-green: #22c55e;
+            --text-yellow: #facc15;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--primary-bg);
+            color: white;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- BACKGROUND & ANIMATION --- */
+        .bg-grid-dots {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1.5px, transparent 1.5px);
+            background-size: 30px 30px;
+            z-index: -3;
+        }
+        
+        .flower-particle {
+            position: fixed;
+            z-index: 0; opacity: 0.8;
+            filter: drop-shadow(0 0 5px pink);
+            animation: floatDown 10s linear infinite;
+        }
+        @keyframes floatDown {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- UI COMPONENTS --- */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .notify-box {
+            background: rgba(11, 17, 33, 0.95);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            box-shadow: 0 0 30px rgba(14, 165, 233, 0.15);
+        }
+
+        .btn-zalo {
+            background: linear-gradient(180deg, #3b82f6 0%, #1e3a8a 100%);
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.5);
+            transition: transform 0.2s;
+        }
+        .btn-zalo:active { transform: scale(0.98); }
+
+        .product-item {
+            background-color: #050b14;
+            border: 2px solid #38bdf8;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .product-item:hover {
+            transform: translateY(-2px);
+            border-color: #7dd3fc;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+        }
+        .product-pro { border-color: #f472b6; }
+
+        /* --- MODAL CHUNG --- */
+        .custom-modal {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .hidden-modal {
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
+        .modal-content-anim {
+            transform: scale(1);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .hidden-modal .modal-content-anim {
+            transform: scale(0.9);
+        }
+
+        .modal-content {
+            background-color: var(--modal-bg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .feature-list li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+        .feature-list li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0; top: 2px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .btn-buy-now, .btn-green-custom {
+            background: linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+            border: none;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+            transition: filter 0.2s;
+        }
+        .btn-buy-now:hover, .btn-green-custom:hover { filter: brightness(1.1); }
+
+        /* --- MENU DROPDOWN GLOW --- */
+        .dropdown-glow {
+            background: rgba(11, 17, 33, 0.98);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        .dropdown-glow::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            border-radius: inherit;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+        }
+
+        /* --- AUTH & BILL MODAL --- */
+        .auth-container {
+            background-color: #0b1120;
+            border: 1px solid rgba(56, 189, 248, 0.5); 
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+        .auth-input, .select-custom {
+            background-color: transparent;
+            border: 1px solid #e2e8f0;
+            color: #f3f4f6;
+            transition: all 0.3s;
+        }
+        .select-custom option { background-color: #0b1120; color: white; }
+        
+        .auth-input:focus, .select-custom:focus {
+            border-color: #38bdf8;
+            outline: none;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+        }
+        .auth-btn {
+            background-color: #439b46;
+            transition: background-color 0.2s;
+        }
+        .auth-btn:hover { background-color: #388e3b; }
+
+        .custom-checkbox {
+            appearance: none;
+            width: 18px; height: 18px;
+            border: 1px solid #4b5563; border-radius: 4px;
+            background-color: transparent; display: inline-block;
+            position: relative; cursor: pointer;
+        }
+        .custom-checkbox:checked {
+            background-color: #38bdf8;
+            border-color: #38bdf8;
+        }
+        .custom-checkbox:checked::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            color: white; font-size: 12px; position: absolute;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+
+        /* QR Background Gradient */
+        .bg-qr-gradient {
+            background: linear-gradient(180deg, #4f46e5 0%, #a855f7 100%);
+        }
+        .qr-list i {
+            width: 24px;
+            text-align: center; font-size: 16px; margin-right: 6px;
+        }
+
+        /* Tùy chỉnh nút Sidebar */
+        .sidebar-btn {
+            background-color: #d1d5db;
+            color: #1f2937; 
+            border-radius: 9999px;
+            padding: 14px 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, filter 0.2s;
+            width: 100%;
+        }
+        .sidebar-btn:active { transform: scale(0.98); }
+        .sidebar-btn i { font-size: 18px; color: #374151; }
+
+        /* Tùy chỉnh icon thao tác trong Lịch sử đơn hàng */
+        .action-icon-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center; justify-content: center;
+            font-size: 12px; transition: all 0.2s;
+            background: transparent;
+        }
+        .action-icon-btn:hover { background: rgba(255,255,255,0.1); }
+        
+        /* Chớp nháy cho chữ "Đang chờ thanh toán" */
+        @keyframes pulse-text {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .animate-pulse-text { animation: pulse-text 1.5s infinite; }
+    </style>
+</head>
+
+<body class="flex flex-col min-h-screen relative">
+
+    <div class="bg-grid-dots"></div>
+    <div class="flower-particle text-xl" style="left: 10%; animation-delay: 0s;">🌸</div>
+    <div class="flower-particle text-2xl" style="right: 15%; animation-delay: 2s;">🌸</div>
+    <div class="flower-particle text-lg" style="left: 40%; animation-delay: 4s;">🌸</div>
+    <div class="flower-particle text-xl" style="right: 5%; animation-delay: 1s;">🌸</div>
+
+    <header class="fixed top-0 w-full z-40 glass-panel h-16">
+        <div class="container mx-auto px-4 h-full flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <button onclick="openSidebarMenu()" class="text-gray-400 hover:text-white transition text-2xl"><i class="fa-solid fa-bars"></i></button>
+                <div class="w-10 h-10 rounded-xl overflow-hidden border border-gray-600">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3408/3408506.png" class="w-full h-full object-cover">
+                </div>
+            </div>
+          
+            <div class="flex items-center gap-3 relative">
+                <div class="relative w-9 h-9 rounded-xl flex items-center justify-center border border-gray-400 bg-transparent">
+                    <i class="fa-regular fa-bell text-gray-300 text-lg"></i>
+                    <span class="absolute top-1 right-1.5 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                </div>
+                
+                <div class="relative">
+                    <div id="user-header-btn" onclick="toggleUserMenu(event)" class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition">
+                        <img src="https://img.freepik.com/premium-photo/3d-avatar-boy-character_914455-603.jpg" class="w-10 h-10 rounded-full border border-gray-600">
+                        <div class="flex flex-col leading-tight" id="user-header-info">
+                        </div>
+                    </div>
+
+                    <div id="user-dropdown" class="absolute top-full right-0 mt-3 w-48 rounded-[14px] z-50 hidden opacity-0 scale-95 transition-all duration-200 transform origin-top-right dropdown-glow">
+                        <div class="flex flex-col p-1.5 space-y-1" id="dropdown-content">
+                        </div>
+                    </div>
+                </div>
+            </div>
+         </div>
+    </header>
+    <div class="h-20"></div>
+
+    <main class="container mx-auto px-4 pb-20 max-w-2xl flex-grow">
+        
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Trang chủ</h1>
+            <div class="flex items-center gap-2 text-sm text-gray-400">
+                <span>Trang Chủ</span> <i class="fa-solid fa-chevron-right text-[10px]"></i> <span class="text-green-500">Sản Phẩm</span>
+            </div>
+        </div>
+
+        <div class="notify-box rounded-2xl p-6 mb-8 relative overflow-hidden">
+            <div class="text-center mb-6">
+                <h2 class="text-yellow-400 font-bold text-lg uppercase flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation animate-pulse"></i> THÔNG BÁO QUAN TRỌNG <i class="fa-solid fa-triangle-exclamation animate-pulse"></i>
+                </h2>
+                <p class="text-gray-300 text-sm mt-2">Những trường hợp bị khóa tài khoản vui lòng liên hệ admin để được hoàn file khác.</p>
+            </div>
+        
+            <div class="flex flex-col items-center gap-2 mb-6">
+                <span class="text-gray-400 text-sm font-bold"><i class="fa-solid fa-mobile-screen"></i> ZALO ADMIN:</span>
+                <a href="https://zalo.me/0905564558" class="btn-zalo w-full max-w-[250px] py-3 rounded-lg text-white font-bold text-xl text-center tracking-widest border border-blue-400">0905564558</a>
+            </div>
+
+            <div class="space-y-3 border-t border-gray-700 pt-4 text-sm">
+                <div class="flex justify-between border-b border-gray-800 pb-2 border-dashed">
+                    <span class="text-gray-300"><i class="fa-solid fa-paperclip w-5"></i> Tổng hợp link tải:</span>
+                    <span class="text-cyan-400 font-bold cursor-pointer">Nhấn vào đây</span>
+                </div>
+                <div class="flex justify-between border-b border-gray-800 pb-2 border-dashed">
+                    <span class="text-gray-300"><i class="fa-solid fa-wrench w-5"></i> Cách fix lỗi log acc:</span>
+                    <span class="text-cyan-400 font-bold cursor-pointer">Nhấn vào đây</span>
+                </div>
+                <div class="flex justify-between border-b border-gray-800 pb-2 border-dashed">
+                    <span class="text-gray-300"><i class="fa-regular fa-comments w-5"></i> Các box của admin:</span>
+                    <span class="text-cyan-400 font-bold cursor-pointer">Nhấn vào đây</span>
+                </div>
+            </div>
+
+            <div class="mt-6 text-center">
+                <p class="text-[10px] text-gray-500 uppercase font-bold mb-3">Shop tự động 100% nạp bank auto 24/7</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="openTopupCardModal()" class="bg-[#2e1065] border border-purple-500 text-white py-2 rounded-lg font-bold text-sm"><i class="fa-solid fa-credit-card text-yellow-300"></i> Nạp Card</button>
+                    <button onclick="openTopupBankModal()" class="bg-[#172554] border border-blue-500 text-white py-2 rounded-lg font-bold text-sm"><i class="fa-solid fa-building-columns text-green-300"></i> Nạp Bank</button>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="bg-gradient-to-r from-emerald-500 to-teal-600 py-3 px-4 rounded-t-xl flex items-center justify-between relative overflow-hidden shadow-lg shadow-emerald-500/20">
+                <div class="flex items-center gap-2 text-white font-bold uppercase relative z-10">
+                    <i class="fa-solid fa-cart-shopping"></i> Tất cả sản phẩm
+                </div>
+                <i class="fa-solid fa-leaf text-white/20 text-3xl absolute right-2 top-0 rotate-12"></i>
+            </div>
+            <div class="flex flex-col gap-3 mt-4" id="product-list"></div>
+        </div>
+    </main>
+
+    <div id="sidebar-modal" class="fixed inset-0 z-[150] custom-modal hidden-modal">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeSidebarMenu()"></div>
+        <div class="absolute top-4 right-4 z-10">
+            <button onclick="closeSidebarMenu()" class="bg-[maroon] text-white border-2 border-white w-10 h-10 flex items-center justify-center rounded transition hover:bg-red-700 text-xl font-bold">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="relative w-full max-w-sm mx-auto mt-24 px-4 flex flex-col z-10 modal-content-anim">
+            <button onclick="closeSidebarMenu()" class="sidebar-btn"><i class="fa-solid fa-house"></i> Trang Chủ</button>
+            <button onclick="openOrdersModal(); closeSidebarMenu()" class="sidebar-btn"><i class="fa-solid fa-receipt"></i> Đơn hàng</button>
+            <button onclick="openTopupBankModal(); closeSidebarMenu()" class="sidebar-btn"><i class="fa-solid fa-building-columns"></i> Nạp qua Ngân hàng</button>
+            <button onclick="openTopupCardModal(); closeSidebarMenu()" class="sidebar-btn"><i class="fa-solid fa-credit-card"></i> Nạp qua Thẻ cào</button>
+            <button id="admin-menu-btn" onclick="openAdminModal(); closeSidebarMenu()" class="sidebar-btn hidden"><i class="fa-solid fa-screwdriver-wrench text-red-600"></i> Menu quản trị viên</button>
+        </div>
+    </div>
+
+    <div id="orders-modal" class="fixed inset-0 z-[140] flex items-center justify-center px-2 sm:px-4 custom-modal hidden-modal">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeOrdersModal()"></div>
+        <div class="auth-container modal-content-anim w-full max-w-3xl rounded-xl relative z-10 p-4 sm:p-6 border-cyan-400 overflow-y-auto max-h-[90vh]">
+            
+            <div class="mb-4">
+                <h2 class="text-white font-bold text-lg">Trang chủ</h2>
+                <p class="text-gray-400 text-sm font-medium">Lịch sử mua hàng</p>
+            </div>
+
+            <div class="border border-cyan-500 rounded-xl p-4 sm:p-5">
+                <h3 class="text-cyan-400 font-bold mb-4">Lịch sử mua hàng</h3>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+                    <input type="text" placeholder="Mã đơn hàng" class="auth-input bg-transparent w-full px-4 py-2 rounded-lg text-sm">
+                    <input type="text" placeholder="Tìm theo chi phí" class="auth-input bg-transparent w-full px-4 py-2 rounded-lg text-sm">
+                    <input type="text" placeholder="" class="auth-input bg-transparent w-full px-4 py-2 rounded-lg text-sm">
+                </div>
+                
+                <div class="flex gap-3 mb-6">
+                    <button class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg flex items-center gap-2 text-sm font-bold transition">
+                        <i class="fa-solid fa-magnifying-glass"></i> Tìm kiếm
+                    </button>
+                    <button class="bg-[#d32f2f] hover:bg-red-700 text-white px-5 py-2 rounded-lg flex items-center gap-2 text-sm font-bold transition">
+                        <i class="fa-solid fa-xmark"></i> Bỏ lọc
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto w-full mb-4 border border-gray-700 rounded-lg">
+                    <div class="min-w-[600px] w-full">
+                        <div class="grid grid-cols-[50px_120px_1fr_1fr] gap-4 p-4 border-b border-gray-700 text-white font-bold text-sm">
+                            <div class="flex items-center justify-center">
+                                <input type="checkbox" class="custom-checkbox">
+                            </div>
+                            <div class="text-center">Thao tác</div>
+                            <div>Mã đơn hàng</div>
+                            <div>Sản phẩm</div>
+                        </div>
+                        
+                        <div id="orders-list-container" class="text-white text-sm font-medium">
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="alert('Đã xóa các đơn hàng được chọn!')" class="bg-[#d32f2f] hover:bg-red-700 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-bold transition">
+                    <i class="fa-solid fa-trash-can"></i> Xóa đã chọn
+                </button>
+            </div>
+            
+            <button onclick="closeOrdersModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition text-2xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="admin-modal" class="fixed inset-0 z-[160] flex items-center justify-center px-4 custom-modal hidden-modal">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeAdminModal()"></div>
+        <div class="auth-container modal-content-anim w-full max-w-[450px] rounded-xl relative z-10 p-6 border-red-500 overflow-y-auto max-h-[90vh]">
+            <div class="flex justify-between items-center border-b border-gray-700 pb-3 mb-4">
+                <h2 class="text-xl font-bold text-red-500 uppercase"><i class="fa-solid fa-user-shield"></i> Quản Trị Viên</h2>
+                <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="bg-[#050b14] p-4 rounded-lg border border-gray-700 mb-4">
+                <h3 class="text-yellow-400 font-bold mb-2 text-sm">1. Xử lý API nạp lỗi</h3>
+                <p class="text-gray-400 text-xs mb-3">Quét và duyệt tự động các thẻ cào hoặc hóa đơn ngân hàng đang bị kẹt hệ thống.</p>
+                <button onclick="adminProcessTopup()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 w-full rounded transition text-sm">Xử lý Nạp Card/Bank ngay</button>
+            </div>
+            <div class="bg-[#050b14] p-4 rounded-lg border border-gray-700 mb-4">
+                <h3 class="text-green-400 font-bold mb-2 text-sm">2. Cộng tiền User</h3>
+                <input type="text" id="admin-add-user" placeholder="Nhập Username khách hàng" class="auth-input w-full px-3 py-2 rounded text-sm mb-2">
+                <input type="number" id="admin-add-amount" placeholder="Số tiền cần cộng (VD: 50000)" class="auth-input w-full px-3 py-2 rounded text-sm mb-3">
+                <button onclick="adminAddBalance()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 w-full rounded transition text-sm">Thực hiện Cộng Tiền</button>
+            </div>
+            <div class="bg-[#050b14] p-4 rounded-lg border border-red-900 mb-2">
+                <h3 class="text-red-400 font-bold mb-2 text-sm">3. Xóa vĩnh viễn tài khoản User</h3>
+                <input type="text" id="admin-del-user" placeholder="Nhập Username cần xóa" class="auth-input w-full px-3 py-2 rounded text-sm mb-3 border-red-800">
+                <button onclick="adminDeleteUser()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 w-full rounded transition text-sm"><i class="fa-solid fa-trash-can"></i> Xóa Tài Khoản Này</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="product-modal" class="fixed inset-0 z-[100] flex items-center justify-center px-4 custom-modal hidden-modal">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeProductModal()"></div>
+        <div class="modal-content modal-content-anim w-full max-w-md rounded-2xl relative z-10 flex flex-col p-1 overflow-hidden">
+            <button onclick="closeProductModal()" class="absolute top-3 right-3 z-50 text-white/50 hover:text-white bg-black/30 rounded-full w-8 h-8 flex items-center justify-center transition"><i class="fa-solid fa-xmark"></i></button>
+            <div class="relative w-full h-48 md:h-56 bg-gray-900 rounded-t-xl overflow-hidden group">
+                <img id="modal-img" src="" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" alt="Product Image">
+                <div class="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-[#081020] to-transparent"></div>
+            </div>
+            <div class="bg-[#081020] px-6 pb-6 pt-2 rounded-b-xl relative z-10">
+                <h2 id="modal-title" class="text-center text-yellow-400 font-bold text-xl uppercase mb-6 drop-shadow-md"></h2>
+                <ul id="modal-features" class="feature-list space-y-2 mb-6 pl-2"></ul>
+                <div class="grid grid-cols-3 gap-2 mb-6 text-center">
+                    <div><div class="text-gray-400 text-xs font-medium mb-1">Còn lại</div><div id="modal-stock" class="text-white font-rajdhani font-bold text-lg">0</div></div>
+                    <div><div class="text-gray-400 text-xs font-medium mb-1">Đã bán</div><div id="modal-sold" class="text-white font-rajdhani font-bold text-lg">0</div></div>
+                    <div><div class="text-gray-400 text-xs font-medium mb-1">Giá</div><div id="modal-price" class="text-yellow-500 font-rajdhani font-bold text-lg">0đ</div></div>
+                </div>
+                <button onclick="buyProduct()" class="btn-buy-now w-full py-3.5 rounded-lg text-white font-bold text-base uppercase tracking-wider flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-cart-shopping"></i> Mua ngay
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="login-modal" class="fixed inset-0 z-[110] flex items-center justify-center px-4 custom-modal hidden-modal">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeAuthModals()"></div>
+        <div class="auth-container modal-content-anim w-full max-w-[400px] rounded-xl relative z-10 p-6">
+            <h2 class="text-xl font-bold text-white mb-6">Đăng Nhập Tài Khoản</h2>
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="mb-4">
+                    <label class="block text-gray-200 text-sm font-bold mb-2">Tài khoản:</label>
+                    <input type="text" id="login-username" required placeholder="Nhập tài khoản" class="auth-input bg-[#050b14] w-full px-4 py-3 rounded-lg text-sm">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-200 text-sm font-bold mb-2">Mật khẩu:</label>
+                    <input type="password" id="login-password" required placeholder="Nhập mật khẩu" class="auth-input bg-[#050b14] w-full px-4 py-3 rounded-lg text-sm">
+                </div>
+                <div class="flex items-center justify-between mb-6">
+                    <label class="flex items-center cursor-pointer gap-2">
+                        <input type="checkbox" id="login-remember" class="custom-checkbox" checked>
+                        <span class="text-gray-400 text-sm">Lưu phiên</span>
+                    </label>
+                    <a href="#" class="text-gray-400 text-sm hover:text-white transition">Quên mật khẩu ?</a>
+                </div>
+                <button type="submit" class="auth-btn w-full py-3 rounded-lg text-white font-bold text-base mb-4">Đăng Nhập</button>
+            </form>
+            <div class="text-center mt-2">
+                <span class="text-gray-400 text-sm">Không có tài khoản?</span>
+                <button onclick="switchAuthModal('register')" class="text-cyan-400 font-bold text-sm hover:text-cyan-300">Đăng Ký</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="register-modal" class="fixed inset-0 z-[110] flex items-center justify-center px-4 custom-modal hidden-modal">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeAuthModals()"></div>
+        <div class="auth-container modal-content-anim w-full max-w-[400px] rounded-xl relative z-10 p-6 border-cyan-400">
+            <h2 class="text-xl font-bold text-white mb-6">Đăng Ký Tài Khoản</h2>
+            <form id="register-form" onsubmit="handleRegister(event)">
+                <div class="mb-4">
+                    <label class="block text-gray-200 text-sm font-bold mb-2">Email:</label>
+                    <input type="email" id="reg-email" required placeholder="Nhập tài khoản" class="auth-input bg-[#050b14] w-full px-4 py-3 rounded-lg text-sm">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-200 text-sm font-bold mb-2">Tài khoản:</label>
+                    <input type="text" id="reg-username" required placeholder="Nhập tài khoản" class="auth-input bg-[#050b14] w-full px-4 py-3 rounded-lg text-sm">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-200 text-sm font-bold mb-2">Mật khẩu:</label>
+                    <input type="password" id="reg-password" required placeholder="Nhập mật khẩu" class="auth-input bg-[#050b14] w-full px-4 py-3 rounded-lg text-sm">
+                </div>
+                <button type="submit" class="auth-btn w-full py-3 rounded-lg text-white font-bold text-base mb-4">Đăng Ký</button>
+            </form>
+            <div class="text-center mt-2">
+                <span class="text-gray-400 text-sm">Đã có tài khoản?</span>
+                <button onclick="switchAuthModal('login')" class="text-cyan-400 font-bold text-sm hover:text-cyan-300">Đăng Nhập</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="topup-card-modal" class="fixed inset-0 z-[110] flex items-center justify-center px-4 custom-modal hidden-modal">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeAllTopupModals()"></div>
+        <div class="auth-container modal-content-anim w-full max-w-[400px] rounded-xl relative z-10 p-6 border-cyan-400 overflow-y-auto max-h-[90vh]">
+            <h2 class="text-lg font-bold text-cyan-400 mb-4">Nạp Thẻ Cào Tự Động:</h2>
+            <form onsubmit="handleTopupCard(event)">
+                <div class="mb-4">
+                    <label class="block text-white text-sm font-bold mb-2">Nhà mạng :</label>
+                    <select class="select-custom w-full px-4 py-3 rounded-lg text-sm cursor-pointer" required>
+                        <option value="" disabled selected hidden>Chọn nhà mạng</option>
+                        <option value="VIETTEL">Viettel</option>
+                        <option value="VINAPHONE">Vinaphone</option>
+                        <option value="MOBIFONE">Mobifone</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-white text-sm font-bold mb-2">Mệnh giá :</label>
+                    <select id="card-value" onchange="calculateCardDiscount()" class="select-custom w-full px-4 py-3 rounded-lg text-sm cursor-pointer" required>
+                        <option value="" disabled selected hidden>Chọn mệnh giá</option>
+                        <option value="10000">10.000đ</option>
+                        <option value="20000">20.000đ</option>
+                        <option value="50000">50.000đ</option>
+                        <option value="100000">100.000đ</option>
+                        <option value="200000">200.000đ</option>
+                        <option value="500000">500.000đ</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-white text-sm font-bold mb-2">Serial :</label>
+                    <input type="text" required placeholder="Nhập serial" class="auth-input w-full px-4 py-3 rounded-lg text-sm">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-white text-sm font-bold mb-2">Mã thẻ :</label>
+                    <input type="text" required placeholder="Nhập mã thẻ" class="auth-input w-full px-4 py-3 rounded-lg text-sm">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-white text-sm font-bold mb-2">Mã bảo vệ :</label>
+                    <div class="flex items-center gap-2">
+                        <input type="text" required placeholder="Nhập mã bảo vệ" class="auth-input w-[60%] px-4 py-3 rounded-lg text-sm">
+                        <div class="bg-gray-200 text-red-600 font-bold text-lg px-4 py-2 rounded flex-1 text-center" id="captcha-display">395</div>
+                        <button type="button" onclick="refreshCaptcha()" class="bg-transparent border border-gray-600 text-green-500 rounded p-3 hover:bg-white/10 transition">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="mb-6"><p class="text-white font-bold text-sm">Số tiền thực nhận: <span id="card-discount-amount" class="text-red-500">0đ</span></p></div>
+                <button type="submit" class="btn-green-custom w-full max-w-[150px] py-3 rounded-lg text-white font-bold text-base">Nạp Ngay</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="topup-bank-modal" class="fixed inset-0 z-[110] flex items-center justify-center px-4 custom-modal hidden-modal">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeAllTopupModals()"></div>
+        <div class="auth-container modal-content-anim w-full max-w-[400px] rounded-xl relative z-10 p-6 border-cyan-400">
+            <h2 class="text-cyan-400 font-bold text-lg">Nạp ATM tự động</h2>
+            <p class="text-white text-xs mb-4">Trang Chủ &nbsp;>&nbsp; <span class="text-green-500">Nạp ATM Tự Động</span></p>
+            <div class="border border-green-500 rounded-lg p-3 mb-6 text-white font-bold text-sm bg-transparent">NẠP TỰ ĐỘNG 24/7</div>
+            <h3 class="text-cyan-400 font-bold mb-2">Tạo hóa đơn ngân hàng</h3>
+            <div class="border border-cyan-500 rounded-xl p-6 flex flex-col items-center">
+                <div class="w-32 h-32 mb-6 relative">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Bank" class="w-full h-full object-contain filter invert opacity-90 drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">
+                    <i class="fa-solid fa-dollar-sign absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-[40%] text-4xl text-yellow-600"></i>
+                </div>
+                <button onclick="openInvoiceModal()" class="btn-green-custom w-full py-3 rounded-lg text-white font-bold">Tạo hóa đơn</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="invoice-modal" class="fixed inset-0 z-[120] flex items-center justify-center px-4 custom-modal hidden-modal">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeInvoiceModal()"></div>
+        <div class="auth-container modal-content-anim w-full max-w-[400px] rounded-xl relative z-10 p-6 border-cyan-400">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-2">
+                <h2 class="text-white font-bold text-lg">Tạo hóa đơn</h2>
+                <button onclick="closeInvoiceModal()" class="text-gray-400 hover:text-white transition text-xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <label class="block text-white font-bold text-sm mb-3">Số tiền - Ví dụ: 10000 : <span class="text-red-500">*</span></label>
+            <input type="number" id="invoice-amount" placeholder="Số tiền cần nạp" class="auth-input bg-transparent w-full px-4 py-3 rounded-lg mb-6 text-sm">
+            <button onclick="generateBankQR()" class="btn-green-custom w-full py-3 rounded-lg text-white font-bold">Tạo hóa đơn</button>
+        </div>
+    </div>
+
+    <div id="qr-modal" class="fixed inset-0 z-[130] flex items-center justify-center custom-modal hidden-modal bg-qr-gradient overflow-y-auto">
+        <div class="w-full max-w-[420px] p-4 flex flex-col items-center min-h-screen py-10">
+            <h1 class="text-3xl font-bold text-[#818cf8] mb-2 uppercase drop-shadow-md">NẠP BANK</h1>
+            <p class="text-white text-sm mb-6 text-center">Sử dụng App Internet Banking hoặc camera để quét mã QR</p>
+           
+            <div class="bg-white rounded-[24px] p-6 w-full shadow-2xl relative">
+                <h2 class="text-blue-600 font-bold text-lg mb-4">Quét Mã QR Để Thanh Toán</h2>
+                <ul class="space-y-3 mb-6 text-gray-800 text-sm font-bold qr-list">
+                    <li class="flex items-center"><i class="fa-solid fa-building-columns text-blue-500"></i> Ngân Hàng:MBBANK</li>
+                    <li class="flex items-center"><i class="fa-regular fa-credit-card text-blue-700"></i> Số tài khoản:0905564558</li>
+                    <li class="flex items-center"><i class="fa-solid fa-user text-blue-500"></i> Chủ tài khoản:NGUYEN DUY PHUOC TAI</li>
+                    <li class="flex items-center"><i class="fa-solid fa-circle-dollar-to-slot text-green-600"></i> <span class="text-green-600">Số tiền:<span id="qr-display-amount">0đ</span></span></li>
+                    <li class="flex items-center"><i class="fa-regular fa-pen-to-square text-orange-400"></i> Nội dung CK:<span id="qr-display-content" class="text-gray-800 ml-1"></span></li>
+                    <li class="flex items-center"><i class="fa-solid fa-hourglass-half text-yellow-600"></i> <span id="qr-status-text" class="text-yellow-600 animate-pulse-text">Trạng thái: Đang chờ thanh toán...</span></li>
+                </ul>
+                <div class="border-2 border-purple-400 rounded-2xl p-3 flex justify-center mb-2">
+                    <img id="qr-dynamic-img" src="" class="w-56 h-56 object-contain" alt="QR Code">
+                </div>
+            </div>
+            <p class="text-white text-center mt-6 text-sm px-4">Hệ thống đang kiểm tra tự động bằng API. Vui lòng thanh toán trong vòng 15 phút.</p>
+            <button onclick="closeQRModal()" class="bg-blue-600 hover:bg-blue-700 transition text-white font-bold py-3 px-8 rounded-lg mt-4 shadow-lg">Đóng (Quay Lại)</button>
+        </div>
+    </div>
+
+    <script>
+        // --- BIẾN TOÀN CỤC LƯU SẢN PHẨM ĐANG CHỌN ---
+        let currentSelectedProduct = null;
+
+        // --- DATA SẢN PHẨM ---
+        const productsData = [
+            { id: 1, name: "IPA FFMAX TRẮNG + FILE AIM", icon: "fa-crosshairs", color: "cyan", imgUrl: "https://i.ytimg.com/vi/Wk9q6QzEw_I/maxresdefault.jpg", detailTitle: "IPA TRẮNG + AIM BODY", features: ["IPA CÓ ĐẠN THẲNG SẴN", "IPA KHÔNG CÓ KEY", "IPA ANTIBAN BYPASS", "KÈM FILE AIM BODY ĐỂ DÁN", "ANTI KHÔNG BAN ID", "CHƠI ĐƯỢC ALL MAP", "CÀI ĐƯỢC TẤT CẢ IOS"], stock: 8, sold: 7, price: "100.000đ" },
+            { id: 2, name: "IPA AIMKILL OB52", icon: "fa-dragon", color: "purple", isHot: true, imgUrl: "https://img.youtube.com/vi/zZ-wVuvk1G8/maxresdefault.jpg", detailTitle: "KEY TUẦN MENU AIMKILL", features: ["ESP, AIMBOT, FOV 360, AIMKILL", "GHOST, NINJA, AIR, HIDE DAME", "AIM SILENT, AUTO FIRE, TELE", "CÓ MOD SKIN TRONG MENU", "KHÔNG BAN ID, KÉO RANK ĐƯỢC", "CÀI ĐƯỢC CHO TẤT CẢ IOS"], stock: 19, sold: 150, price: "70.000đ" },
+            { id: 3, name: "MENU MIGUL LITE", icon: "fa-bolt", color: "white", imgUrl: "https://i.ytimg.com/vi/6qQvQ1d7_5o/maxresdefault.jpg", detailTitle: "KEY NGÀY MIGUL LITE", features: ["ĐỊNH VỊ ESP, AIMBOT GHIM ĐẦU", "AIM FOV 360 ĐỘ SIÊU DÍNH", "ĐẠN THẲNG, BUFF 120 FPS", "ẨN MÀN CÂN KÈO TIỀN", "MUỐN AIMKILL, SILENT IB AD", "CHƠI ĐỘI KÉO RANK ĐƯỢC", "CÀI ĐƯỢC CHO TẤT CẢ IOS"], stock: 8, sold: 191, price: "50.000đ" },
+            { id: 4, name: "MENU MIGUL PRO", icon: "fa-crown", color: "red", isPro: true, imgUrl: "https://i.ytimg.com/vi/uE-3D8Jd4k0/maxresdefault.jpg", detailTitle: "KEY NGÀY MIGUL PRO", features: ["AIMBOT, AIM SILENT, ESP VIP", "ĐẠN THẲNG, NẠP ĐẠN NHANH", "CHẠY NHANH, KÉO ĐỊCH, 120FPS", "BƠM MÁU NHANH, DỊCH CHUYỂN", "NHẢY DÙ NHANH, ĐỔI SÚNG NHANH", "KHÔNG BAN ID, CÓ THỂ KÉO RANK", "CÀI ĐƯỢC CHO ALL PHIÊN BẢN IOS", "KHI MUA GỬI MÃ ĐƠN LẤY IPA + KEY"], stock: 5, sold: 15, price: "75.000đ" }
+        ];
+
+        // --- DATA ĐƠN HÀNG ---
+        const orderHistoryData = [
+            { id: "WA7U", product: "KEY TUẦN MIGUL PRO" },
+            { id: "UJBT", product: "ĐỊNH VỊ ANDROID OB51" },
+            { id: "W7A3", product: "FFMAX CÂN CHECK R8 NEW" },
+            { id: "GDAA97E", product: "IPA TRẮNG + AIM BODY" },
+            { id: "S5QD", product: "MENU + KEY 1 TUẦN" }
+        ];
+
+        // --- RENDER LIST SẢN PHẨM TRANG CHỦ ---
+        const listContainer = document.getElementById('product-list');
+        productsData.forEach(product => {
+            const div = document.createElement('div');
+            let borderClass = product.isPro ? 'product-pro' : '';
+            let iconColor = product.id === 4 ? 'text-red-400' : (product.id === 1 ? 'text-cyan-400' : (product.id === 2 ? 'text-purple-400' : 'text-green-400'));
+            div.className = `product-item rounded-xl p-3 flex items-center gap-4 h-16 relative overflow-hidden group ${borderClass}`;
+       
+            div.onclick = () => openProductModal(product);
+            div.innerHTML = `
+                <div class="w-10 h-10 bg-slate-800 rounded flex items-center justify-center flex-shrink-0 border border-slate-700"><i class="fa-solid ${product.icon} ${iconColor} text-lg"></i></div>
+                <div class="flex-grow z-10"><h4 class="font-bold text-gray-100 text-sm md:text-base group-hover:text-cyan-400 transition">${product.name}</h4>
+                ${product.isHot ? '<div class="absolute right-2 top-1"><i class="fa-solid fa-fire text-red-500 text-xs animate-pulse"></i></div>' : ''}
+                ${product.isPro ? '<div class="absolute top-0 right-0 bg-red-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg">PRO</div>' : ''}</div>
+                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition duration-700"></div>
+            `;
+            listContainer.appendChild(div);
+        });
+
+        // --- RENDER BẢNG LỊCH SỬ ĐƠN HÀNG ---
+        function renderOrderHistory() {
+            const orderContainer = document.getElementById('orders-list-container');
+            orderContainer.innerHTML = ''; // Xoá dữ liệu cũ
+
+            orderHistoryData.forEach(order => {
+                const row = document.createElement('div');
+                row.className = "grid grid-cols-[50px_120px_1fr_1fr] gap-4 p-4 border-b border-gray-700 items-center hover:bg-white/5 transition";
+                
+                row.innerHTML = `
+                    <div class="flex items-center justify-center">
+                        <input type="checkbox" class="custom-checkbox">
+                    </div>
+                    <div class="flex items-center justify-center gap-2">
+                        <button class="action-icon-btn border border-gray-500 text-gray-400 hover:text-white" title="Xem"><i class="fa-regular fa-eye"></i></button>
+                        <button class="action-icon-btn border border-green-500 text-green-500 hover:text-green-400" title="Tải xuống"><i class="fa-solid fa-download"></i></button>
+                        <button class="action-icon-btn border border-red-500 text-red-500 hover:text-red-400" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
+                    </div>
+                    <div class="truncate font-bold">${order.id}</div>
+                    <div class="truncate uppercase leading-tight">${order.product}</div>
+                `;
+                orderContainer.appendChild(row);
+            });
+        }
+
+        // --- MỞ/ĐÓNG MODAL LỊCH SỬ ĐƠN HÀNG ---
+        const ordersModal = document.getElementById('orders-modal');
+        function openOrdersModal() {
+            if(localStorage.getItem('isLoggedIn') !== 'true') { alert('Vui lòng đăng nhập để xem lịch sử mua hàng!'); return; }
+            renderOrderHistory();
+            ordersModal.classList.remove('hidden-modal');
+        }
+        function closeOrdersModal() { ordersModal.classList.add('hidden-modal'); }
+
+        // --- MODAL SẢN PHẨM & TÍNH NĂNG MUA NGAY ---
+        const productModal = document.getElementById('product-modal');
+        
+        function openProductModal(product) {
+            currentSelectedProduct = product; // Lưu lại biến toàn cục để hàm buyProduct sử dụng
+            document.getElementById('modal-img').src = product.imgUrl; 
+            document.getElementById('modal-title').innerText = product.detailTitle;
+            document.getElementById('modal-stock').innerText = product.stock; 
+            document.getElementById('modal-sold').innerText = product.sold;
+            document.getElementById('modal-price').innerText = product.price;
+            
+            const featuresList = document.getElementById('modal-features'); 
+            featuresList.innerHTML = '';
+            product.features.forEach(feat => { const li = document.createElement('li'); li.innerText = feat; featuresList.appendChild(li); });
+            
+            productModal.classList.remove('hidden-modal');
+        }
+        
+        function closeProductModal() { 
+            productModal.classList.add('hidden-modal'); 
+        }
+
+        // Xử lý khi ấn nút "MUA NGAY"
+        function buyProduct() {
+            // Kiểm tra trạng thái đăng nhập
+            if(localStorage.getItem('isLoggedIn') !== 'true') {
+                alert('Vui lòng đăng nhập để mua sản phẩm!');
+                closeProductModal();
+                openAuthModal('login');
+                return;
+            }
+
+            if(!currentSelectedProduct) return;
+
+            // Xử lý làm sạch chuỗi giá tiền (VD: "100.000đ" -> 100000)
+            let priceStr = currentSelectedProduct.price.replace(/\D/g, ''); 
+            let productPrice = parseInt(priceStr);
+            let currentBalance = parseInt(localStorage.getItem('user_balance') || '0');
+
+            // Kiểm tra số dư
+            if(currentBalance < productPrice) {
+                alert(`Lỗi! Số dư của bạn không đủ để mua sản phẩm này.\nGiá sản phẩm: ${formatVND(productPrice)}đ\nSố dư hiện tại: ${formatVND(currentBalance)}đ\n\nVui lòng nạp thêm tiền!`);
+                return;
+            }
+
+            // Thực hiện trừ tiền
+            let newBalance = currentBalance - productPrice;
+            localStorage.setItem('user_balance', newBalance.toString());
+            
+            // Render lại Header để Update số dư hiển thị
+            renderHeaderUI();
+
+            // Sinh mã đơn hàng Random (6 kí tự viết hoa)
+            let randomOrderId = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+            // Thêm đơn hàng mới vào mảng dữ liệu lịch sử (Thêm lên trên cùng)
+            orderHistoryData.unshift({
+                id: randomOrderId,
+                product: currentSelectedProduct.name
+            });
+
+            alert(`✅ MUA HÀNG THÀNH CÔNG!\n\nSản phẩm: ${currentSelectedProduct.name}\nMã đơn hàng của bạn là: ${randomOrderId}\nTiền đã trừ: -${formatVND(productPrice)}đ`);
+
+            // Đóng modal sản phẩm và mở luôn modal Lịch sử đơn hàng
+            closeProductModal();
+            openOrdersModal();
+        }
+
+        // --- HỆ THỐNG ĐĂNG NHẬP / ĐĂNG KÝ / SIDEBAR ---
+        const loginModal = document.getElementById('login-modal');
+        const registerModal = document.getElementById('register-modal');
+        const dropdownContent = document.getElementById('dropdown-content');
+        const userHeaderInfo = document.getElementById('user-header-info');
+        const sidebarModal = document.getElementById('sidebar-modal');
+        const adminMenuBtn = document.getElementById('admin-menu-btn');
+        const adminModal = document.getElementById('admin-modal');
+
+        function openSidebarMenu() {
+            sidebarModal.classList.remove('hidden-modal');
+            const email = localStorage.getItem('db_email');
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if(isLoggedIn && email === 'taip9912@gmail.com') {
+                adminMenuBtn.classList.remove('hidden');
+            } else { adminMenuBtn.classList.add('hidden'); }
+        }
+        function closeSidebarMenu() { sidebarModal.classList.add('hidden-modal'); }
+
+        function openAdminModal() { adminModal.classList.remove('hidden-modal'); }
+        function closeAdminModal() { adminModal.classList.add('hidden-modal'); }
+
+        function toggleUserMenu(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('user-dropdown');
+            if (dropdown.classList.contains('hidden')) {
+                dropdown.classList.remove('hidden');
+                setTimeout(() => { dropdown.classList.remove('opacity-0', 'scale-95'); dropdown.classList.add('opacity-100', 'scale-100'); }, 10);
+            } else { closeDropdown(); }
+        }
+        function closeDropdown() {
+            const dropdown = document.getElementById('user-dropdown');
+            if (dropdown && !dropdown.classList.contains('hidden')) { dropdown.classList.remove('opacity-100', 'scale-100'); dropdown.classList.add('opacity-0', 'scale-95'); setTimeout(() => dropdown.classList.add('hidden'), 200); }
+        }
+        document.addEventListener('click', closeDropdown);
+        function formatVND(amount) { return parseInt(amount).toLocaleString('vi-VN'); }
+
+        function renderHeaderUI() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const savedUsername = localStorage.getItem('db_username');
+            let balance = localStorage.getItem('user_balance') || '0';
+            if (isLoggedIn && savedUsername) {
+                userHeaderInfo.innerHTML = `<span class="text-[15px] font-bold text-yellow-400">${savedUsername}</span><span class="text-[13px] font-bold text-red-500">${formatVND(balance)}đ</span>`;
+                dropdownContent.innerHTML = `<a href="#" class="flex items-center gap-3 px-3 py-2.5 text-white font-bold hover:bg-white/10 rounded-lg transition text-sm"><i class="fa-solid fa-user-shield w-5 text-center text-lg text-cyan-400"></i> Thông tin</a><a href="#" onclick="handleLogout(event)" class="flex items-center gap-3 px-3 py-2.5 text-red-400 font-bold hover:bg-white/10 rounded-lg transition text-sm"><i class="fa-solid fa-right-from-bracket w-5 text-center text-lg"></i> Đăng xuất</a>`;
+            } else {
+                userHeaderInfo.innerHTML = `<span class="text-[15px] font-bold text-yellow-400">Đăng nhập</span><span class="text-[13px] font-bold text-red-500">0đ</span>`;
+                dropdownContent.innerHTML = `<a href="#" onclick="openAuthModal('login', event)" class="flex items-center gap-3 px-3 py-2.5 text-white font-bold hover:bg-white/10 rounded-lg transition text-sm"><i class="fa-regular fa-user w-5 text-center text-lg"></i> Đăng nhập</a><a href="#" onclick="openAuthModal('register', event)" class="flex items-center gap-3 px-3 py-2.5 text-white font-bold hover:bg-white/10 rounded-lg transition text-sm"><i class="fa-solid fa-user-plus w-5 text-center text-lg"></i> Đăng ký</a>`;
+            }
+        }
+
+        function openAuthModal(type, event) {
+            if(event) event.preventDefault();
+            closeDropdown();
+            if(type === 'login') {
+                registerModal.classList.add('hidden-modal');
+                loginModal.classList.remove('hidden-modal');
+                const savedUser = localStorage.getItem('db_username'); if(savedUser) document.getElementById('login-username').value = savedUser;
+            } else { loginModal.classList.add('hidden-modal'); registerModal.classList.remove('hidden-modal'); }
+        }
+        function switchAuthModal(type) { openAuthModal(type); }
+        function closeAuthModals() { loginModal.classList.add('hidden-modal'); registerModal.classList.add('hidden-modal'); }
+
+        function handleRegister(event) {
+            event.preventDefault();
+            const email = document.getElementById('reg-email').value; const user = document.getElementById('reg-username').value; const pass = document.getElementById('reg-password').value;
+            localStorage.setItem('db_email', email); localStorage.setItem('db_username', user); localStorage.setItem('db_password', pass);
+            if(!localStorage.getItem('user_balance')) localStorage.setItem('user_balance', '0');
+            alert(`Đăng ký thành công!\nEmail: ${email} đã được lưu.`);
+            document.getElementById('login-username').value = user; document.getElementById('login-password').value = pass; switchAuthModal('login');
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const inputUser = document.getElementById('login-username').value; const inputPass = document.getElementById('login-password').value;
+            const dbUser = localStorage.getItem('db_username'); const dbPass = localStorage.getItem('db_password');
+            if (!dbUser) { alert("Tài khoản không tồn tại! Vui lòng đăng ký."); return; }
+            if (inputUser === dbUser && inputPass === dbPass) {
+                localStorage.setItem('isLoggedIn', 'true');
+                alert("Đăng nhập thành công!"); closeAuthModals(); renderHeaderUI();
+            } else { alert("Sai tài khoản hoặc mật khẩu!"); }
+        }
+        function handleLogout(event) { event.preventDefault();
+            closeDropdown(); localStorage.setItem('isLoggedIn', 'false'); alert("Đã đăng xuất."); renderHeaderUI(); }
+
+        // --- CÁC HÀM QUẢN TRỊ VIÊN ---
+        function adminProcessTopup() { alert("Đã kết nối API thành công. Không có thẻ lỗi hoặc hóa đơn kẹt nào ở thời điểm hiện tại!"); }
+        function adminAddBalance() {
+            const user = document.getElementById('admin-add-user').value.trim();
+            const amount = parseInt(document.getElementById('admin-add-amount').value);
+            if(!user || isNaN(amount) || amount <= 0) return alert('Vui lòng nhập Username và Số tiền hợp lệ!');
+            if(user === localStorage.getItem('db_username')) {
+                let currentBalance = parseInt(localStorage.getItem('user_balance') || '0');
+                localStorage.setItem('user_balance', currentBalance + amount); alert(`Thành công! Đã cộng ${formatVND(amount)}đ cho tài khoản: ${user}`);
+                renderHeaderUI(); document.getElementById('admin-add-amount').value = '';
+            } else { alert('Không tìm thấy Username này trong CSDL Local!'); }
+        }
+        function adminDeleteUser() {
+            const user = document.getElementById('admin-del-user').value.trim();
+            if(!user) return alert('Vui lòng nhập Username cần xóa!');
+            if(user === localStorage.getItem('db_username')) {
+                if(confirm(`CẢNH BÁO: Bạn có chắc chắn muốn xóa vĩnh viễn user "${user}" không?`)) {
+                    localStorage.removeItem('db_username');
+                    localStorage.removeItem('db_password'); localStorage.removeItem('db_email'); localStorage.removeItem('user_balance'); localStorage.setItem('isLoggedIn', 'false');
+                    alert(`Đã xóa vĩnh viễn tài khoản: ${user}`); document.getElementById('admin-del-user').value = ''; renderHeaderUI(); closeAdminModal();
+                }
+            } else { alert('Không tìm thấy Username này trong hệ thống để xóa!'); }
+        }
+
+        // --- NẠP THẺ & TẠO QR BANK ---
+        const topupCardModal = document.getElementById('topup-card-modal');
+        const topupBankModal = document.getElementById('topup-bank-modal');
+        const invoiceModal = document.getElementById('invoice-modal');
+        const qrModal = document.getElementById('qr-modal');
+
+        function closeAllTopupModals() { topupCardModal.classList.add('hidden-modal'); topupBankModal.classList.add('hidden-modal'); }
+
+        function openTopupCardModal() {
+            if(localStorage.getItem('isLoggedIn') !== 'true') { alert('Vui lòng đăng nhập trước khi nạp tiền!'); return; }
+            topupCardModal.classList.remove('hidden-modal'); refreshCaptcha(); calculateCardDiscount();
+        }
+
+        function calculateCardDiscount() {
+            const val = document.getElementById('card-value').value;
+            const display = document.getElementById('card-discount-amount');
+            if(val) { let realAmount = parseInt(val) * 0.8; display.innerText = formatVND(realAmount) + 'đ'; } else { display.innerText = '0đ'; }
+        }
+
+        function refreshCaptcha() { document.getElementById('captcha-display').innerText = Math.floor(100 + Math.random() * 900); }
+
+        function handleTopupCard(event) { event.preventDefault();
+            alert('Yêu cầu nạp thẻ đã được gửi thành công! Đang chờ hệ thống xử lý...'); closeAllTopupModals(); }
+
+        function openTopupBankModal() {
+            if(localStorage.getItem('isLoggedIn') !== 'true') { alert('Vui lòng đăng nhập trước khi nạp tiền!'); return; }
+            topupBankModal.classList.remove('hidden-modal');
+        }
+
+        function openInvoiceModal() { invoiceModal.classList.remove('hidden-modal'); document.getElementById('invoice-amount').value = ''; }
+        function closeInvoiceModal() { invoiceModal.classList.add('hidden-modal'); }
+
+
+        // ==========================================
+        // KHỐI XỬ LÝ LẮP API NGÂN HÀNG THẬT SỰ (SEPAY LÀM CHUẨN)
+        // ==========================================
+        let checkPaymentInterval;
+
+        function startPaymentObserver(expectedAmount, transferContent) {
+            console.log(`Bắt đầu gọi API theo dõi giao dịch: ${transferContent} - ${expectedAmount}đ`);
+            
+            if (checkPaymentInterval) clearInterval(checkPaymentInterval);
+
+            let attemptCount = 0;
+            const maxAttempts = 180; // 15 phút (mỗi 5s check 1 lần)
+
+            checkPaymentInterval = setInterval(async () => {
+                attemptCount++;
+                
+                try {
+                    // CẤU HÌNH API THẬT CỦA BẠN TẠI ĐÂY
+                    // Thay thế "YOUR_SEPAY_API_TOKEN" bằng Token tích hợp API mà SePay cấp cho bạn
+                    const API_URL = "https://my.sepay.vn/userapi/transactions/list?limit=10";
+                    
+                    const response = await fetch(API_URL, {
+                        method: "GET",
+                        headers: {
+                            "Authorization": "Bearer YOUR_SEPAY_API_TOKEN", 
+                            "Content-Type": "application/json"
+                        }
+                    });
+
+                    // Nếu API lỗi, bỏ qua và đợi lần quét 5 giây tiếp theo
+                    if (!response.ok) {
+                        console.warn("Chưa thể kết nối tới API Ngân hàng, sẽ thử lại sau 5s...");
+                        return; 
+                    }
+
+                    const data = await response.json();
+                    
+                    // Phân tích dữ liệu API trả về (Cấu trúc mảng của SePay)
+                    if (data && data.transactions && data.transactions.length > 0) {
+                        
+                        // Lọc trong danh sách 10 giao dịch gần nhất
+                        const matchedTx = data.transactions.find(tx => 
+                            tx.transaction_content && tx.transaction_content.includes(transferContent)
+                        );
+
+                        // Nếu tìm thấy đúng Nội dung CK và Số tiền khách nạp >= số tiền hóa đơn yêu cầu
+                        if (matchedTx && parseInt(matchedTx.amount_in) >= parseInt(expectedAmount)) {
+                            clearInterval(checkPaymentInterval); // Dừng vòng lặp lại
+                            handleTopupSuccess(matchedTx.amount_in, transferContent); // Gọi hàm cộng tiền
+                        }
+                    }
+
+                } catch (error) {
+                    console.error("Lỗi khi kết nối API ngân hàng thật:", error);
+                }
+
+                // Nếu quét liên tục trong 15 phút mà không thấy thanh toán -> tắt quét.
+                if (attemptCount >= maxAttempts) {
+                    clearInterval(checkPaymentInterval);
+                    alert("Đã hết thời gian chờ thanh toán (15 phút). Nếu bạn đã chuyển khoản, xin vui lòng liên hệ Admin qua Zalo để được hỗ trợ cộng tay.");
+                    closeQRModal();
+                }
+
+            }, 5000); // Tần suất gọi API: 5 giây / 1 lần
+        }
+
+        function handleTopupSuccess(amount, content) {
+            let currentBalance = parseInt(localStorage.getItem('user_balance') || '0');
+            let amountReceived = parseInt(amount);
+            
+            localStorage.setItem('user_balance', (currentBalance + amountReceived).toString());
+            
+            renderHeaderUI();
+            
+            alert(`✅ NẠP TIỀN TỰ ĐỘNG THÀNH CÔNG!\n\nHệ thống API đã xác nhận ngân hàng.\nTài khoản của bạn vừa được cộng thêm: ${formatVND(amountReceived)}đ.`);
+            
+            closeQRModal();
+        }
+
+        function generateBankQR() {
+            const amountInput = document.getElementById('invoice-amount').value;
+            if(!amountInput || amountInput <= 0) { alert('Vui lòng nhập số tiền hợp lệ!'); return; }
+            
+            // Random mã nội dung (ví dụ: NAPA1B2C3)
+            const randomContent = "NAP" + Math.random().toString(36).substring(2, 8).toUpperCase();
+            
+            document.getElementById('qr-display-amount').innerText = formatVND(amountInput) + 'đ';
+            document.getElementById('qr-display-content').innerText = randomContent;
+            document.getElementById('qr-status-text').innerText = "Trạng thái: Đang chờ thanh toán...";
+
+            const bankId = "MB"; const accNo = "0905564558";
+            const accName = "NGUYEN DUY PHUOC TAI";
+            const qrUrl = `https://img.vietqr.io/image/${bankId}-${accNo}-compact2.png?amount=${amountInput}&addInfo=${randomContent}&accountName=${encodeURIComponent(accName)}`;
+            document.getElementById('qr-dynamic-img').src = qrUrl;
+
+            closeInvoiceModal(); closeAllTopupModals(); 
+            qrModal.classList.remove('hidden-modal');
+            
+            // Bắt đầu kích hoạt gọi API thật để Check nội dung chuyển khoản
+            startPaymentObserver(amountInput, randomContent);
+        }
+
+        function closeQRModal() { 
+            qrModal.classList.add('hidden-modal'); 
+            if (checkPaymentInterval) {
+                clearInterval(checkPaymentInterval);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => { renderHeaderUI(); });
+    </script>
+</body>
+</html>
